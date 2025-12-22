@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>DPM</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+
+<h3>DPM</h3>
+
+<!-- Unlock Section -->
+<input id="master" type="password" placeholder="Master Password" />
+<button id="unlockBtn">Unlock</button>
+
+<div id="status"></div>
+
+<!-- App Section -->
+<div id="app" class="hidden">
+
+  <input id="search" placeholder="Search service..." />
+
+  <h4>Add Entry</h4>
+  <input id="service" placeholder="Service" />
+  <input id="username" placeholder="Username" />
+  <input id="password" type="password" placeholder="Password" />
+  <button id="addBtn">Add Entry</button>
+
+  <button id="saveBtn">Save to Cloud</button>
+  <button id="loadBtn">Load from Cloud</button>
+
+</div>
+
+<script type="module" src="popup.js"></script>
+</body>
+</html>

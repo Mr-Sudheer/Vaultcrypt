@@ -1,0 +1,81 @@
+body {
+  font-family: Arial, sans-serif;
+  width: 340px;
+  padding: 10px;
+}
+
+input {
+  width: 100%;
+  padding: 6px;
+  margin-top: 6px;
+  box-sizing: border-box;
+}
+
+button {
+  width: 100%;
+  padding: 8px;
+  margin-top: 10px;
+  cursor: pointer;
+  background: #0b70ff;
+  border: none;
+  color: white;
+  border-radius: 4px;
+}
+
+button:hover {
+  opacity: 0.9;
+}
+
+.hidden {   
+  display: none;
+}
+
+#status {
+  margin-top: 8px;
+  font-size: 13px;
+  font-weight: bold;
+  min-height: 18px;
+}
+
+.status-success {
+  color: green;
+}
+
+.status-error {
+  color: red;
+}
+
+/* -------------------- VAULT LIST -------------------- */
+.entry {
+  padding: 6px;
+  background: #f1f1f1;
+  margin-top: 6px;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.entry-title {
+  font-weight: bold;
+}
+
+.entry-buttons button {
+  width: auto;
+  margin-top: 0;
+  margin-left: 4px;
+  padding: 5px 8px;
+  background: #444;
+}
+
+.entry-buttons button.primary {
+  background: #0b70ff;
+}
+
+#vaultList {
+  max-height: 200px;
+  overflow-y: auto;
+  border: 1px solid #ddd;
+  padding: 6px;
+  border-radius: 4px;
+}

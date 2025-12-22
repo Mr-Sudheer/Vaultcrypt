@@ -1,0 +1,16 @@
+{
+  "manifest_version": 3,
+  "name": "DPM",
+  "version": "1.0",
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "permissions": ["storage"],
+  "host_permissions": [
+    "https://withered-snow-4a6f.dotsudheer.workers.dev/*",
+    "https://gateway.pinata.cloud/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
