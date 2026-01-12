@@ -1,5 +1,3 @@
-// background.js - MV3 service worker
-
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   (async () => {
     try {

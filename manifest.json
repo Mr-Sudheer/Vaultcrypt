@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "DPM",
+  "name": "VaultCrypt",
   "version": "1.0",
   "action": {
     "default_popup": "popup.html"

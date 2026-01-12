@@ -9,9 +9,7 @@ import {
   downloadEncryptedVault
 } from "./core/worker-client.js";
 
-/* ============================
-   DOM
-============================= */
+//DOM
 const masterEl = document.getElementById("master");
 const unlockBtn = document.getElementById("unlockBtn");
 const appEl = document.getElementById("app");
@@ -26,25 +24,24 @@ const addBtn = document.getElementById("addBtn");
 const saveBtn = document.getElementById("saveBtn");
 const loadBtn = document.getElementById("loadBtn");
 
-/* ============================
-   STATE (STRICT)
-============================= */
-let masterPassword = null;   // user secret
-let cid = null;             // IPFS CID
-let vaultPayload = null;    // ENCRYPTED ONLY
-let isUnlocked = false;     // cryptographically verified
+appEl.addEventListener("click", resetAutoLockTimer);
+appEl.addEventListener("keydown", resetAutoLockTimer);
 
-/* ============================
-   STATUS
-============================= */
+//STATE
+let masterPassword = null;
+let cid = null;
+let vaultPayload = null;
+let isUnlocked = false;
+let autoLockTimer=null;
+const AUTO_LOCK_MS=30*1000;
+
+//STATUS
 function showStatus(msg, type = "info") {
   statusEl.textContent = msg;
   statusEl.className = type;
 }
 
-/* ============================
-   UNLOCK (VERIFY PASSWORD)
-============================= */
+//UNLOCK
 unlockBtn.addEventListener("click", async () => {
   try {
     isUnlocked = false;
@@ -60,17 +57,17 @@ unlockBtn.addEventListener("click", async () => {
     if (cid) {
       vaultPayload = await downloadEncryptedVault(cid);
 
-      // 🔐 VERIFY PASSWORD (TEST DECRYPT)
       const test = await unlockEncryptedVault(
         masterPassword,
         vaultPayload
       );
-      test.length = 0; // wipe immediately
+      test.length = 0;
     } else {
-      vaultPayload = null; // new vault
+      vaultPayload = null;
     }
 
     isUnlocked = true;
+    resetAutoLockTimer();
     appEl.classList.remove("hidden");
     showStatus("Vault unlocked", "success");
 
@@ -86,9 +83,7 @@ unlockBtn.addEventListener("click", async () => {
   }
 });
 
-/* ============================
-   SEARCH (DECRYPT ON DEMAND)
-============================= */
+//DECRYPT
 searchEl.addEventListener("change", async () => {
   if (!isUnlocked) {
     return showStatus("Vault locked", "error");
@@ -105,19 +100,20 @@ searchEl.addEventListener("change", async () => {
 
     const match = entries.find(e => e.service === query);
 
-    entries.length = 0; // wipe plaintext
+    entries.length = 0;
 
     if (!match) {
       return showStatus("No matching service", "error");
     }
 
-    // TEMPORARY DISPLAY (replace later with secure UI)
+    // TEMPORARY DISPLAY
     alert(
       `Service: ${match.service}\n` +
       `Username: ${match.username}\n` +
       `Password: ${match.password}`
     );
 
+    resetAutoLockTimer();
     showStatus("Entry shown temporarily", "success");
 
   } catch (e) {
@@ -126,9 +122,7 @@ searchEl.addEventListener("change", async () => {
   }
 });
 
-/* ============================
-   ADD ENTRY
-============================= */
+//ADDING ENTRY
 addBtn.addEventListener("click", async () => {
   if (!isUnlocked) {
     return showStatus("Unlock vault first", "error");
@@ -171,6 +165,7 @@ addBtn.addEventListener("click", async () => {
 
     serviceEl.value = userEl.value = passEl.value = "";
     showStatus("Entry added (not yet saved)", "success");
+    resetAutoLockTimer();
 
   } catch (e) {
     console.error(e);
@@ -178,9 +173,7 @@ addBtn.addEventListener("click", async () => {
   }
 });
 
-/* ============================
-   SAVE (SAFE)
-============================= */
+//SAVE
 saveBtn.addEventListener("click", async () => {
   if (!isUnlocked) {
     return showStatus("Vault locked. Cannot save.", "error");
@@ -198,6 +191,7 @@ saveBtn.addEventListener("click", async () => {
     await chrome.storage.local.set({ dpm_cid: cid });
 
     showStatus("Vault saved securely", "success");
+    resetAutoLockTimer();
 
   } catch (e) {
     console.error(e);
@@ -205,9 +199,47 @@ saveBtn.addEventListener("click", async () => {
   }
 });
 
-/* ============================
-   LOAD (RE-UNLOCK)
-============================= */
+//LOCK VAULT
+function lockVault(reason = "Vault locked") {
+  masterPassword = null;
+  vaultPayload = null;
+  isUnlocked = false;
+
+  if (autoLockTimer) {
+    clearTimeout(autoLockTimer);
+    autoLockTimer = null;
+  }
+
+  appEl.classList.add("hidden");
+  masterEl.value = "";
+  searchEl.value = "";
+  serviceEl.value = "";
+  userEl.value = "";
+  passEl.value = "";
+
+  showStatus(reason, "info");
+}
+
+function resetAutoLockTimer() {
+  if (!isUnlocked) return;
+
+  if (autoLockTimer) {
+    clearTimeout(autoLockTimer);
+  }
+
+  autoLockTimer = setTimeout(() => {
+    lockVault("Auto-locked due to inactivity");
+  }, AUTO_LOCK_MS);
+}
+
+//LOAD
 loadBtn.addEventListener("click", () => {
   unlockBtn.click();
+});
+
+//LOCK ON POPUP CLOSE
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden && isUnlocked) {
+    lockVault("Vault locked (popup closed)");
+  }
 });
