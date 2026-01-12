@@ -50,16 +50,6 @@ At no point is plaintext data or the master password transmitted or stored remot
 
 ---
 
-## Tech Stack
-
-- **Frontend:** HTML, CSS, Chrome Extension (Manifest V3)
-- **Client Logic:** JavaScript
-- **Cryptography:** Web Crypto API (PBKDF2, AES-256-GCM)
-- **Backend:** Cloudflare Workers (JavaScript runtime)
-- **Storage:** IPFS (Pinata)
-
----
-
 ## Advantages
 
 - No plaintext password storage
