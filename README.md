@@ -28,10 +28,10 @@ Vaultcrypt follows a **client-side encryption first** approach:
 
 ## Tech Stack
 
-**HTML, CSS, JavaScript** - Browser extension UI and logic
-**Web Crypto API** - local encryption(PBKDF2, AES-GCM)
-**Pinata(IPFS)** - Decentralized storage for encrupted Vault
-**Cloudfare workers** - Secure request handling and gateway layer
+**HTML, CSS, JavaScript** - Browser extension UI and logic  
+**Web Crypto API** - local encryption(PBKDF2, AES-GCM)  
+**Pinata(IPFS)** - Decentralized storage for encrupted Vault  
+**Cloudfare workers** - Secure request handling and gateway layer  
 
 ---
 
@@ -43,15 +43,15 @@ git clone https://github.com/Mr-Sudheer/Vaultcrypt.git
 cd Vaultcrypt
 ```
 **Load the browser extension**
--Open browser extension page - Chrome://extensions 
--Enable developer mode
--Load Unpacked
--Select cloned directory
--Now, the extension will appear in browser toolbar and is ready to use
+-Open browser extension page - Chrome://extensions  
+-Enable developer mode  
+-Load Unpacked  
+-Select cloned directory  
+-Now, the extension will appear in browser toolbar and is ready to use  
 
-**⚠️Disclaimer**
-This project uses a shared Cloudflare Worker backend for demonstration purposes.
-All Pinata API credentials are stored securely server-side and are never exposed to the browser extension or client.
+**⚠️Disclaimer**  
+This project uses a shared Cloudflare Worker backend for demonstration purposes.  
+All Pinata API credentials are stored securely server-side and are never exposed to the browser extension or client.  
 
 ---
 
