@@ -2,8 +2,6 @@
 
 Vaultcrypt is a lightweight, privacy-focused decentralized password manager that encrypts user credentials locally and stores only encrypted data on decentralized storage.
 
-**Status:** Work in Progress
-
 ---
 
 ## Problem Statement
@@ -42,6 +40,7 @@ Vaultcrypt follows a **client-side encryption first** approach:
 git clone https://github.com/Mr-Sudheer/Vaultcrypt.git
 cd Vaultcrypt
 ```
+
 **Load the browser extension**
 -Open browser extension page - Chrome://extensions  
 -Enable developer mode  
@@ -52,6 +51,25 @@ cd Vaultcrypt
 **⚠️Disclaimer**  
 This project uses a shared Cloudflare Worker backend for demonstration purposes.  
 All Pinata API credentials are stored securely server-side and are never exposed to the browser extension or client.  
+
+---
+
+## Screenshots
+<table>
+  <tr>
+    <td>
+    <img src="password_interface.png" width="100%" alt="Authentication page asking for master password."/>
+    <b>Authentication page</b>
+    </td>
+    <td>
+    <img src="Vault.png" width="100%" alt="Vault dashboard to add and retrieve credentials."/>
+    <b>Vault dashboard</b>
+    </td>
+  </tr>
+</table>
+
+Authenticate using the master password to unlock the vault.
+Use Vault dashboard to add and retrieve valid credentials.     
 
 ---
 
