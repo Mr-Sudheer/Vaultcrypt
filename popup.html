@@ -2,35 +2,48 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <title>DPM</title>
+  <title>Vault</title>
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
 
-<h3>DPM</h3>
+<h3>Vaultcrypt</h3>
 
 <!-- Unlock Section -->
-<input id="master" type="password" placeholder="Master Password" />
-<button id="unlockBtn">Unlock</button>
+  <div id="unlock-section">
+  <input id="master" class="input-field" type="password" placeholder="Master Password" />
+  <div id="strength-bar-container">
+    <div id="strength-bar"></div>
+  </div>
+  <span id="strength-label"></span>
+  <p>Note: The password protection is enabled only after adding atleast one entry.</p>
+  <button id="unlockBtn" disabled>Unlock</button>
+ </div>
 
 <div id="status"></div>
 
 <!-- App Section -->
 <div id="app" class="hidden">
 
-  <input id="search" placeholder="Search service..." />
+  <input id="search" class="input-field" placeholder="Search service..." />
+  <div id="search-result" class="hidden">
+    <p><span class="result-label">Service:</span> <span id="res-service"></span></p>
+    <p><span class="result-label">Username:</span> <span id="res-username"></span></p>
+    <p><span class="result-label">Password:</span> <span id="res-password"></span></p>
+  </div>
 
   <h4>Add Entry</h4>
-  <input id="service" placeholder="Service" />
-  <input id="username" placeholder="Username" />
-  <input id="password" type="password" placeholder="Password" />
-  <button id="addBtn">Add Entry</button>
-
-  <button id="saveBtn">Save to Cloud</button>
-  <button id="loadBtn">Load from Cloud</button>
+  <input id="service" class="input-field" placeholder="Service" />
+  <input id="username" class="input-field" placeholder="Username" />
+  <input id="password" class="input-field" type="password" placeholder="Password" />
+  <div class="action-row">
+    <button id="addSaveBtn">Add</button>
+    <button id="loadBtn">Load</button>
+  </div>
 
 </div>
 
+<script src="zxcvbn.js"></script>
 <script type="module" src="popup.js"></script>
 </body>
 </html>

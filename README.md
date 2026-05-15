@@ -38,6 +38,8 @@ Vaultcrypt follows a **client-side encryption first** approach:
 **Clone the repo**
 ```bash
 git clone https://github.com/Mr-Sudheer/Vaultcrypt.git
+```
+```bash
 cd Vaultcrypt
 ```
 
@@ -58,17 +60,15 @@ All Pinata API credentials are stored securely server-side and are never exposed
 <table>
   <tr>
     <td>
-    <img src="password_interface.png" width="100%" alt="Authentication page asking for master password."/>
-    <b>Authentication page</b>
+    <img src="images/Unlock_panel.png" width="100%"/>
     </td>
     <td>
-    <img src="Vault.png" width="100%" alt="Vault dashboard to add and retrieve credentials."/>
-    <b>Vault dashboard</b>
+    <img src="images/Interface.png" width="100%"/>
     </td>
   </tr>
 </table>
 
-Authenticate using the master password to unlock the vault.
+Authenticate using the master password to unlock the vault.  
 Use Vault dashboard to add and retrieve valid credentials.     
 
 ---
@@ -94,6 +94,7 @@ At no point is plaintext data or the master password transmitted or stored remot
 - Backend API keys are never exposed to the client
 - Vault integrity is ensured using authenticated encryption (AES-GCM)
 - Backend acts only as a relay for encrypted data
+- Password strength is evaluated to encourage strong master passwords using zxcvbn
 
 ---
 
