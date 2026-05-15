@@ -9,6 +9,10 @@ import {
   downloadEncryptedVault
 } from "./core/worker-client.js";
 
+//zxcvbn
+const strengthColors = ['#ff4e4e', '#ff914d', '#ffd000', '#4caf50', '#1b7e34'];
+const strengthLabels = ['Very weak', 'Weak', 'Fair', 'Strong', 'Very strong'];
+
 //DOM
 const masterEl = document.getElementById("master");
 const unlockBtn = document.getElementById("unlockBtn");
@@ -20,8 +24,7 @@ const serviceEl = document.getElementById("service");
 const userEl = document.getElementById("username");
 const passEl = document.getElementById("password");
 
-const addBtn = document.getElementById("addBtn");
-const saveBtn = document.getElementById("saveBtn");
+const addSaveBtn = document.getElementById('addSaveBtn');
 const loadBtn = document.getElementById("loadBtn");
 
 appEl.addEventListener("click", resetAutoLockTimer);
@@ -35,8 +38,32 @@ let isUnlocked = false;
 let autoLockTimer=null;
 const AUTO_LOCK_MS=30*1000;
 
+//zxcvbn 
+
+document.getElementById('master').addEventListener('input', (e) => {
+  const val = e.target.value;
+  const bar = document.getElementById('strength-bar');
+  const label = document.getElementById('strength-label');
+
+  if (!val) {
+    bar.style.width = '0%';
+    label.textContent = '';
+    unlockBtn.disabled = true;
+    return;
+  }
+
+  const result = zxcvbn(val);
+  const score = result.score; // 0–4
+  bar.style.width = ((score + 1) * 20) + '%';
+  bar.style.background = strengthColors[score];
+  label.textContent = strengthLabels[score];
+  label.style.color = strengthColors[score];
+  unlockBtn.disabled = score < 3;
+});
+
 //STATUS
 function showStatus(msg, type = "info") {
+  if (msg === "Vault unlocked") return;
   statusEl.textContent = msg;
   statusEl.className = type;
 }
@@ -45,7 +72,7 @@ function showStatus(msg, type = "info") {
 unlockBtn.addEventListener("click", async () => {
   try {
     isUnlocked = false;
-    masterPassword = masterEl.value.trim();
+    masterPassword = masterEl.value;
 
     if (!masterPassword) {
       return showStatus("Master password required", "error");
@@ -69,6 +96,9 @@ unlockBtn.addEventListener("click", async () => {
     isUnlocked = true;
     resetAutoLockTimer();
     appEl.classList.remove("hidden");
+    document.getElementById('unlock-section').classList.add('hidden');
+    showStatus("", "");
+    unlockBtn.disabled = true;
     showStatus("Vault unlocked", "success");
 
   } catch (e) {
@@ -107,11 +137,11 @@ searchEl.addEventListener("change", async () => {
     }
 
     // TEMPORARY DISPLAY
-    alert(
-      `Service: ${match.service}\n` +
-      `Username: ${match.username}\n` +
-      `Password: ${match.password}`
-    );
+    document.getElementById('res-service').textContent = match.service;
+    document.getElementById('res-username').textContent = match.username;
+    document.getElementById('res-password').textContent = match.password;
+    document.getElementById('search-result').classList.remove('hidden');
+
 
     resetAutoLockTimer();
     showStatus("Entry shown temporarily", "success");
@@ -122,80 +152,45 @@ searchEl.addEventListener("change", async () => {
   }
 });
 
-//ADDING ENTRY
-addBtn.addEventListener("click", async () => {
-  if (!isUnlocked) {
-    return showStatus("Unlock vault first", "error");
-  }
+document.getElementById('addSaveBtn').addEventListener('click', async () => {
+  if (!isUnlocked) return showStatus("Unlock vault first", "error");
 
   const s = serviceEl.value.trim();
   const u = userEl.value.trim();
   const p = passEl.value.trim();
 
-  if (!s || !p) {
-    return showStatus("Service and password required", "error");
-  }
+  if (!s || !p) return showStatus("Service and password required", "error");
 
   try {
     let entries = [];
 
     if (vaultPayload) {
-      entries = await unlockEncryptedVault(
-        masterPassword,
-        vaultPayload
-      );
+      entries = await unlockEncryptedVault(masterPassword, vaultPayload);
     }
 
     entries.push({ service: s, username: u, password: p });
 
     if (!vaultPayload) {
-      vaultPayload = await createEncryptedVault(
-        masterPassword,
-        entries
-      );
+      vaultPayload = await createEncryptedVault(masterPassword, entries);
     } else {
-      vaultPayload = await updateEncryptedVault(
-        masterPassword,
-        vaultPayload,
-        entries
-      );
+      vaultPayload = await updateEncryptedVault(masterPassword, vaultPayload, entries);
     }
 
-    entries.length = 0; // wipe plaintext
+    entries.length = 0;
 
-    serviceEl.value = userEl.value = passEl.value = "";
-    showStatus("Entry added (not yet saved)", "success");
-    resetAutoLockTimer();
-
-  } catch (e) {
-    console.error(e);
-    showStatus("Add failed", "error");
-  }
-});
-
-//SAVE
-saveBtn.addEventListener("click", async () => {
-  if (!isUnlocked) {
-    return showStatus("Vault locked. Cannot save.", "error");
-  }
-
-  if (!vaultPayload) {
-    return showStatus("Nothing to save", "error");
-  }
-
-  try {
     const res = await uploadEncryptedVault(vaultPayload);
     if (!res.success) throw new Error(res.error);
 
     cid = res.cid;
     await chrome.storage.local.set({ dpm_cid: cid });
 
-    showStatus("Vault saved securely", "success");
+    serviceEl.value = userEl.value = passEl.value = "";
+    showStatus("Entry saved to cloud", "success");
     resetAutoLockTimer();
 
   } catch (e) {
     console.error(e);
-    showStatus("Save failed", "error");
+    showStatus("Failed to save entry", "error");
   }
 });
 
@@ -210,8 +205,12 @@ function lockVault(reason = "Vault locked") {
     autoLockTimer = null;
   }
 
+  document.getElementById('unlock-section').classList.remove('hidden');
+  document.getElementById('search-result').classList.add('hidden');
+
   appEl.classList.add("hidden");
   masterEl.value = "";
+  unlockBtn.disabled = true;
   searchEl.value = "";
   serviceEl.value = "";
   userEl.value = "";
